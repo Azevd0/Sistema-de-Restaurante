@@ -16,10 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/categoria")
 @Tag(name = "Categorias", description = "Organização das comidas por suas categorias")
-
 public class CategoriaController {
-    @Autowired
-    private CategoriaService service;
+    private final CategoriaService service;
+
+    public CategoriaController(CategoriaService service) {
+        this.service = service;
+    }
 
     @Operation(summary = "Listar todas as categorias")
     @GetMapping

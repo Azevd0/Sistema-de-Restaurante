@@ -4,6 +4,7 @@ import com.br.davyson.GerenciamentoPedidos.services.AtendenteService;
 import com.br.davyson.GerenciamentoPedidos.dto.AtendenteResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.AtendenteRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/atendente")
+@Tag(name = "Atendentes", description = "Gerenciamento dos usuários")
+
 public class AtendenteController {
 
     private final AtendenteService atendenteService;

@@ -14,8 +14,8 @@ import java.util.List;
 
 @Service
 public class ComidaService {
-    private ComidaRepository comidaRepository;
-    private CategoriaRepository categoriaRepository;
+    private final ComidaRepository comidaRepository;
+    private final CategoriaRepository categoriaRepository;
 
     public ComidaService(ComidaRepository comidaRepository, CategoriaRepository categoriaRepository) {
         this.comidaRepository = comidaRepository;

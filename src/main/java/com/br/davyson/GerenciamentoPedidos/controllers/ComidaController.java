@@ -18,8 +18,11 @@ import java.util.List;
 @RequestMapping("/comida")
 @Tag(name = "Cardápio", description = "Gerenciamento dos itens do cardápio do restaurante")
 public class ComidaController {
-    @Autowired
-    private ComidaService comidaService;
+    private final ComidaService comidaService;
+
+    public ComidaController(ComidaService comidaService) {
+        this.comidaService = comidaService;
+    }
 
     @Operation(summary = "Listar todo o cardápio")
     @GetMapping

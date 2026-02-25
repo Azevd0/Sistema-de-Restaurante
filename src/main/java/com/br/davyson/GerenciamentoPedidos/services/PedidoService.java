@@ -16,11 +16,11 @@ import java.util.List;
 
 @Service
 public class PedidoService {
-    private PedidoRepository pedidoRepository;
-    private ComidaRepository comidaRepository;
-    private AtendenteRepository atendenteRepository;
-    private ReciboRepository reciboRepository;
-    private AtendenteService atendenteService;
+    private final PedidoRepository pedidoRepository;
+    private final ComidaRepository comidaRepository;
+    private final AtendenteRepository atendenteRepository;
+    private final ReciboRepository reciboRepository;
+    private final AtendenteService atendenteService;
 
     public PedidoService(PedidoRepository pedidoRepository, ComidaRepository comidaRepository, AtendenteRepository atendenteRepository, ReciboRepository reciboRepository,AtendenteService atendenteService) {
         this.pedidoRepository = pedidoRepository;

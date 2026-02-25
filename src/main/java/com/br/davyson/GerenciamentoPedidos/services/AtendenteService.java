@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public class AtendenteService {
-    private AtendenteRepository atendenteRepository;
+    private final AtendenteRepository atendenteRepository;
 
     public AtendenteService(AtendenteRepository atendenteRepository) {
         this.atendenteRepository = atendenteRepository;
