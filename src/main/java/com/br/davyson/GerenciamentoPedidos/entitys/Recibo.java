@@ -17,12 +17,16 @@ public class Recibo {
 
     @Enumerated(EnumType.STRING)
     private FormaPagamento formaPagamento;
+    private Integer qtdDePessoas;
+    private BigDecimal media;
 
-    public Recibo(LocalDateTime dataFechamento, BigDecimal valorTotal, String detalheConsumo, FormaPagamento formaPagamento) {
+    public Recibo(LocalDateTime dataFechamento, BigDecimal valorTotal, String detalheConsumo, FormaPagamento formaPagamento, Integer qtdDePessoas, BigDecimal media) {
         this.id = id;
         this.dataFechamento = dataFechamento;
         this.valorTotal = valorTotal;
         this.formaPagamento = formaPagamento;
+        this.media = media;
+        this.qtdDePessoas = qtdDePessoas;
     }
 
     public Recibo(){}
@@ -64,6 +68,18 @@ public class Recibo {
     public void setFormaPagamento(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
+
+    public Integer getQtdDePessoas() {
+        return qtdDePessoas;
+    }
+
+    public void setQtdDePessoas(Integer qtdDePessoas) {
+        this.qtdDePessoas = qtdDePessoas;
+    }
+
+    public BigDecimal getMedia() {return media;}
+
+    public void setMedia(BigDecimal media) {this.media = media;}
 
     @Override
     public boolean equals(Object o) {

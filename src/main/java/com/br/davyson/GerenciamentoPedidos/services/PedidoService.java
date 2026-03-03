@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -104,9 +105,12 @@ public class PedidoService {
     }
 
     @Transactional
-    public Object registrarPagamento(Integer mesa, BigDecimal valorRecebido, FormaPagamento formaDePagamento) {
+    public Object registrarPagamento(Integer mesa, BigDecimal valorRecebido, FormaPagamento formaDePagamento, Integer qtdPessoas) {
         Pedido pedido = buscarPorMesa(mesa);
 
+        if (qtdPessoas == null || qtdPessoas <= 0) {
+            qtdPessoas = 1;
+        }
         pedido.setValorPago(pedido.getValorPago().add(valorRecebido));
         pedido.setFormaDePagamento(formaDePagamento);
 
@@ -117,6 +121,9 @@ public class PedidoService {
         if (totalPago.compareTo(totalComTaxa) >= 0 || totalPago.compareTo(subtotalSemTaxa) >= 0) {
             pedido.setStatusPagamento(true);
             Recibo recibo = new Recibo(pedido);
+            BigDecimal media = totalPago.divide(BigDecimal.valueOf(qtdPessoas), 2, RoundingMode.HALF_UP);
+            recibo.setMedia(media);
+            recibo.setQtdDePessoas(qtdPessoas);
 
             reciboRepository.save(recibo);
             pedidoRepository.delete(pedido);

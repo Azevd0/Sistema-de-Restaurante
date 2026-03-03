@@ -57,8 +57,8 @@ public class PedidoController {
     }
     @Operation(summary = "Registrar pagamento")
     @PatchMapping("/pagamento/{mesa}")
-    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @RequestParam BigDecimal valor, @RequestParam FormaPagamento forma) {
-        Object resultado = pedidoService.registrarPagamento(mesa, valor, forma);
+    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @RequestParam BigDecimal valor, @RequestParam FormaPagamento forma, @PathVariable Integer qtdPessoas) {
+        Object resultado = pedidoService.registrarPagamento(mesa, valor, forma, qtdPessoas);
         return ResponseEntity.ok(resultado);
     }
 }
