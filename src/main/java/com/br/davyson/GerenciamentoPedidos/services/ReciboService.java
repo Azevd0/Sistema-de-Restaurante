@@ -3,6 +3,7 @@ package com.br.davyson.GerenciamentoPedidos.services;
 import com.br.davyson.GerenciamentoPedidos.dto.FaturamentoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.ReciboResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.entitys.Recibo;
+import com.br.davyson.GerenciamentoPedidos.enums.Fatura;
 import com.br.davyson.GerenciamentoPedidos.repositorys.ReciboRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,35 +19,31 @@ public class ReciboService {
         this.reciboRepository = reciboRepository;
     }
 
-    public List<ReciboResponseDTO> listarHistorico(String periodo) {
-        if (periodo.equalsIgnoreCase("tudo")) {
-            return reciboRepository.findAll().stream()
-                    .map(ReciboResponseDTO::new)
-                    .toList();
-        }
-        LocalDateTime dataLimite = switch (periodo.toLowerCase()) {
-            case "semana" -> LocalDateTime.now().minusWeeks(1);
-            case "quinzena" -> LocalDateTime.now().minusWeeks(2);
-            default -> throw new IllegalArgumentException("Período inválido: " + periodo);
+    public List<ReciboResponseDTO> listarHistorico(Fatura periodo) {
+        LocalDateTime dataLimite = switch (periodo) {
+            case TOTAL_SEMANA -> LocalDateTime.now().minusWeeks(1);
+            case TOTAL_QUINZENA -> LocalDateTime.now().minusWeeks(2);
+            case TOTAL_MENSAL -> LocalDateTime.now().minusMonths(1);
         };
-        return reciboRepository.findByDataFechamentoAfter(dataLimite).stream()
+
+        return reciboRepository.findByDataFechamentoAfter(dataLimite)
+                .stream()
                 .map(ReciboResponseDTO::new)
                 .toList();
     }
+
     private BigDecimal somarPorPeriodo(LocalDateTime data) {
-        return reciboRepository.findByDataFechamentoAfter(data).stream()
+        return reciboRepository.findByDataFechamentoAfter(data)
+                .stream()
                 .map(Recibo::getValorTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
     public FaturamentoResponseDTO calcularFaturamento() {
         BigDecimal semana = somarPorPeriodo(LocalDateTime.now().minusWeeks(1));
         BigDecimal quinzena = somarPorPeriodo(LocalDateTime.now().minusWeeks(2));
-        BigDecimal total = reciboRepository.findAll().stream()
-                .map(Recibo::getValorTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal mensal = somarPorPeriodo(LocalDateTime.now().minusMonths(1));
 
-        return new FaturamentoResponseDTO(semana, quinzena, total);
+        return new FaturamentoResponseDTO(semana, quinzena, mensal);
     }
-
-
 }
