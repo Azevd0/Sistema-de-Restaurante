@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/atendente")
-@Tag(name = "Atendentes", description = "Gerenciamento dos usuários")
+@Tag(name = "Atendentes", description = "Gerenciamento dos funcionários")
 
 public class AtendenteController {
 
@@ -22,8 +22,8 @@ public class AtendenteController {
     public AtendenteController(AtendenteService atendenteService) {
         this.atendenteService = atendenteService;
     }
-    @Operation(summary = "Listar todos os atendentes")
 
+    @Operation(summary = "Listar todos os atendentes")
     @GetMapping
     public ResponseEntity<List<AtendenteResponseDTO>> listarTodos() {
         List<AtendenteResponseDTO> list = atendenteService.listAll()
@@ -53,7 +53,6 @@ public class AtendenteController {
     }
 
     @Operation(summary = "Atualizar atendente")
-
     @PutMapping("/atualizacao/{nome}")
     public ResponseEntity<AtendenteResponseDTO> atualizar(@PathVariable String nome, @RequestBody @Valid AtendenteRequestDTO dto) {
         Atendente atualizado = atendenteService.updateAtendenteByName(nome, dto);
