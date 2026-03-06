@@ -21,7 +21,7 @@ public class Atendente {
     private String nome;
 
     @NotBlank(message = "O usuário deve ter uma senha")
-    private String senha; // Aqui será guardado o HASH (BCrypt)
+    private String senha;
 
     @OneToMany(mappedBy = "atendente", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
