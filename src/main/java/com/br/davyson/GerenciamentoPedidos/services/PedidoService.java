@@ -133,6 +133,7 @@ public class PedidoService {
             recibo.setQtdDePessoas(qtdPessoas);
 
             reciboRepository.save(recibo);
+            pedido.getComidas().clear();
             pedidoRepository.delete(pedido);
 
             return new ReciboResponseDTO(recibo);

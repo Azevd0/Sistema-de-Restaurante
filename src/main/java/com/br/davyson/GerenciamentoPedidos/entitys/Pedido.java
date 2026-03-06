@@ -29,11 +29,8 @@ public class Pedido {
     private Integer versao;
 
     @ManyToMany
-    @JoinTable(
-            name = "pedido_comidas",
-            joinColumns = @JoinColumn(name = "pedido_id"),
-            inverseJoinColumns = @JoinColumn(name = "comida_id")
-    )
+    @JoinTable(name = "pedido_comidas", joinColumns = @JoinColumn(name = "pedido_id"),
+            inverseJoinColumns = @JoinColumn(name = "comida_id"))
     private List<Comida> comidas = new ArrayList<>();
     private String observacao;
     private BigDecimal valorPago = BigDecimal.ZERO;
