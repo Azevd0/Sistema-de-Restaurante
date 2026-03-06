@@ -1,4 +1,5 @@
 package com.br.davyson.GerenciamentoPedidos.controllers;
+import com.br.davyson.GerenciamentoPedidos.dto.PedidoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.entitys.Atendente;
 import com.br.davyson.GerenciamentoPedidos.services.AtendenteService;
 import com.br.davyson.GerenciamentoPedidos.dto.AtendenteResponseDTO;
@@ -39,7 +40,13 @@ public class AtendenteController {
         Atendente atendente = atendenteService.searchForName(nome);
         return ResponseEntity.ok(new AtendenteResponseDTO(atendente));
     }
-
+    @Operation(summary = "Listar pedidos do atendente pelo seu id")
+    @GetMapping("/listarPedidos/{id}")
+    public ResponseEntity<List<PedidoResponseDTO>> listarPedidosDoAtendente(@PathVariable Long id){
+        Atendente atendete = atendenteService.findById(id);
+        List<PedidoResponseDTO> pedidos = atendenteService.listarPedidosDoAtendente(atendete);
+        return ResponseEntity.ok(pedidos);
+    }
     @Operation(summary = "Cadastrar atendente")
     @PostMapping("/cadastro")
     public ResponseEntity<AtendenteResponseDTO> cadastrar(@RequestBody @Valid AtendenteRequestDTO dto) {
