@@ -1,6 +1,7 @@
 package com.br.davyson.GerenciamentoPedidos.entitys;
 
 import com.br.davyson.GerenciamentoPedidos.enums.BandeiraCartao;
+import com.br.davyson.GerenciamentoPedidos.enums.FormaPagamento;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,14 +14,16 @@ public class CartaoCliente {
     private Long id;
     @Enumerated(EnumType.STRING)
     private BandeiraCartao bandeiraCartao;
+    private FormaPagamento formaPagamento;
     private BigDecimal saldo;
-    private Integer senha;
+    private String senha;
 
     public CartaoCliente(){}
 
-    public CartaoCliente(Long id, BandeiraCartao bandeiraCartao, BigDecimal saldo, Integer senha) {
+    public CartaoCliente(Long id, BandeiraCartao bandeiraCartao, FormaPagamento formaPagamento, BigDecimal saldo, String senha) {
         this.id = id;
         this.bandeiraCartao = bandeiraCartao;
+        this.formaPagamento = formaPagamento;
         this.saldo = saldo;
         this.senha = senha;
     }
@@ -41,6 +44,14 @@ public class CartaoCliente {
         this.bandeiraCartao = bandeiraCartao;
     }
 
+    public FormaPagamento getFormaPagamento() {
+        return formaPagamento;
+    }
+
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
     public BigDecimal getSaldo() {
         return saldo;
     }
@@ -49,11 +60,11 @@ public class CartaoCliente {
         this.saldo = saldo;
     }
 
-    public Integer getSenha() {
+    public String getSenha() {
         return senha;
     }
 
-    public void setSenha(Integer senha) {
+    public void setSenha(String senha) {
         this.senha = senha;
     }
 }

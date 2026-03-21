@@ -36,7 +36,6 @@ public class Pedido {
     private BigDecimal valorPago = BigDecimal.ZERO;
     private boolean statusPagamento;
     @Column(nullable = false, updatable = false)
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime data = LocalDateTime.now();
 
 

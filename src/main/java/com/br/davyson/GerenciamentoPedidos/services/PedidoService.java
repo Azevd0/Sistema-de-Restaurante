@@ -1,11 +1,11 @@
 package com.br.davyson.GerenciamentoPedidos.services;
 
+import com.br.davyson.GerenciamentoPedidos.dto.ComidaRequestDTO;
+import com.br.davyson.GerenciamentoPedidos.dto.PedidoRequestDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.PedidoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.ReciboResponseDTO;
-import com.br.davyson.GerenciamentoPedidos.entitys.Comanda;
-import com.br.davyson.GerenciamentoPedidos.entitys.Comida;
-import com.br.davyson.GerenciamentoPedidos.entitys.Pedido;
-import com.br.davyson.GerenciamentoPedidos.entitys.Recibo;
+import com.br.davyson.GerenciamentoPedidos.entitys.*;
+import com.br.davyson.GerenciamentoPedidos.enums.BandeiraCartao;
 import com.br.davyson.GerenciamentoPedidos.enums.FormaPagamento;
 import com.br.davyson.GerenciamentoPedidos.exceptions.ObjectNotFoundException;
 import com.br.davyson.GerenciamentoPedidos.repositorys.*;
@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PedidoService {
@@ -26,8 +28,9 @@ public class PedidoService {
     private final AtendenteService atendenteService;
     private final ComidaService comidaService;
     private final ComandaRepository comandaRepository;
+    private final CartaoClienteRepository cartaoClienteRepository;
 
-    public PedidoService(PedidoRepository pedidoRepository, ComidaRepository comidaRepository, AtendenteRepository atendenteRepository, ReciboRepository reciboRepository, AtendenteService atendenteService, ComidaService comidaService, ComandaRepository comandaRepository) {
+    public PedidoService(PedidoRepository pedidoRepository, ComidaRepository comidaRepository, AtendenteRepository atendenteRepository, ReciboRepository reciboRepository, AtendenteService atendenteService, ComidaService comidaService, ComandaRepository comandaRepository, CartaoClienteRepository cartaoClienteRepository) {
         this.pedidoRepository = pedidoRepository;
         this.comidaRepository = comidaRepository;
         this.atendenteRepository = atendenteRepository;
@@ -35,27 +38,38 @@ public class PedidoService {
         this.atendenteService = atendenteService;
         this.comidaService = comidaService;
         this.comandaRepository = comandaRepository;
+        this.cartaoClienteRepository = cartaoClienteRepository;
     }
 
-    //  RASCUNHO - SÓ VOU CRIAR QUANDO A AUTENTICAÇÃO DE USUÁRIO E RESTRIÇÃO DE ACESSO ESTIVEREM FEITAS
-    //    @Transactional
-//    public PedidoResponseDTO lancarPedido(PedidoRequestDTO dto) {
-//        String nomeUsuarioLogado = "Davyson de Azevedo";
-//        Atendente atendente = atendenteService.searchForName(nomeUsuarioLogado);
-//
-//        List<Comida> comidas = dto.nomesComidas().stream()
-//                .map(nome -> comidaRepository.findByNomeIgnoreCase(nome)
-//                        .orElseThrow(() -> new ObjectNotFoundException("Comida '" + nome + "' não encontrada.")))
-//                .toList();
-//
-//        Pedido novoPedido = new Pedido(dto, atendente);
-//        novoPedido.setComidas(comidas);
-//        novoPedido.setObservacao(dto.observacao());
-//        novoPedido.setStatusPagamento(false);
-//
-//        Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
-//        return new PedidoResponseDTO(pedidoSalvo);
-//    }
+    @Transactional
+    public PedidoResponseDTO lancarPedido(PedidoRequestDTO dto) {
+        String nomeUsuario = "José Eduardo";
+        Atendente atendente = atendenteService.buscarPorNome(nomeUsuario);
+
+        List<Comida> comidas = dto.nomesComidas().stream()
+                .map(nome -> comidaRepository.findByNomeIgnoreCase(nome)
+                        .orElseThrow(() -> new ObjectNotFoundException("Comida '" + nome + "' não encontrada.")))
+                .toList();
+
+        Pedido novoPedido = new Pedido();
+        novoPedido.setAtendente(atendente);
+        novoPedido.setMesa(dto.numeroMesa());
+        novoPedido.setComidas(comidas);
+        novoPedido.setObservacao(dto.observacao());
+        novoPedido.setStatusPagamento(false);
+
+        Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
+
+        comidas.forEach(comida -> {
+            Comanda comanda = new Comanda();
+            comanda.setMesa(pedidoSalvo.getMesa());
+            comanda.setAtendenteNome(atendente.getNome());
+            comanda.setComidaNome(comida.getNome());
+            comandaRepository.save(comanda);
+        });
+
+        return new PedidoResponseDTO(pedidoSalvo);
+    }
     @Transactional
     public PedidoResponseDTO adicionarComida(Integer mesa, String nomeComida) {
         Pedido pedido = buscarPorMesa(mesa);
@@ -115,21 +129,39 @@ public class PedidoService {
     }
 
     @Transactional
-    public Object registrarPagamento(Integer mesa, BigDecimal valorRecebido, FormaPagamento formaDePagamento, Integer qtdPessoas) {
+    public Object registrarPagamento(Integer mesa, BigDecimal valorRecebido,Long cartaoId, FormaPagamento formaDePagamento, Integer qtdPessoas, String senhaCartao) {
         Pedido pedido = buscarPorMesa(mesa);
 
-        if (qtdPessoas == null || qtdPessoas <= 0) {
-            qtdPessoas = 1;
+        if (qtdPessoas == null || qtdPessoas <= 0) {qtdPessoas = 1;}
+        BandeiraCartao bandeiraDoCartao = null;
+
+        if (formaDePagamento != FormaPagamento.PIX && formaDePagamento != FormaPagamento.DINHEIRO) {
+            if (cartaoId == null) {
+                throw new RuntimeException("ID do cartão é obrigatório para esta forma de pagamento.");
+            }
+            CartaoCliente cartaoUsado = cartaoClienteRepository.findById(cartaoId)
+                    .orElseThrow(() -> new RuntimeException("Cartão não encontrado."));
+
+            if (!cartaoUsado.getSenha().equals(senhaCartao)) {
+                throw new RuntimeException("Senha do cartão inválida!");
+            }
+            if(!cartaoUsado.getFormaPagamento().equals(formaDePagamento)){
+                throw new RuntimeException("Forma de pagamento inválida!");
+            }
+            if (valorRecebido.compareTo(cartaoUsado.getSaldo()) > 0) {
+                throw new RuntimeException("Saldo insuficiente!");
+            }
+            bandeiraDoCartao = cartaoUsado.getBandeiraCartao();
         }
         pedido.setValorPago(pedido.getValorPago().add(valorRecebido));
 
-        BigDecimal totalComTaxa = pedido.getValorTotal();
         BigDecimal subtotalSemTaxa = pedido.getSubtotal();
         BigDecimal totalPago = pedido.getValorPago();
 
-        if (totalPago.compareTo(totalComTaxa) >= 0 || totalPago.compareTo(subtotalSemTaxa) >= 0) {
+        if (totalPago.compareTo(subtotalSemTaxa) >= 0) {
             pedido.setStatusPagamento(true);
             Recibo recibo = new Recibo(pedido, formaDePagamento);
+            recibo.setBandeiraCartao(bandeiraDoCartao);
             BigDecimal media = totalPago.divide(BigDecimal.valueOf(qtdPessoas), 2, RoundingMode.HALF_UP);
             recibo.setMedia(media);
             recibo.setQtdDePessoas(qtdPessoas);
@@ -142,6 +174,7 @@ public class PedidoService {
         }
         return new PedidoResponseDTO(pedidoRepository.save(pedido));
     }
+
     @Transactional
     public void cancelarComida(Integer mesa, String comidaNome){
         Pedido pedido = buscarPorMesa(mesa);

@@ -15,6 +15,15 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptions {
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<StandardError> runTime(RuntimeException exception, HttpServletRequest request){
+        StandardError standardError = new StandardError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(standardError);
+    }
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<StandardError> objectNotFoundException(ObjectNotFoundException exception, HttpServletRequest request){
         StandardError standardError = new StandardError(

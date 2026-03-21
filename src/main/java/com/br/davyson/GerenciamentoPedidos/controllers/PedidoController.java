@@ -1,11 +1,14 @@
 package com.br.davyson.GerenciamentoPedidos.controllers;
 
+import com.br.davyson.GerenciamentoPedidos.dto.PedidoRequestDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.PedidoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.entitys.Pedido;
 import com.br.davyson.GerenciamentoPedidos.enums.FormaPagamento;
 import com.br.davyson.GerenciamentoPedidos.services.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -33,6 +36,14 @@ public class PedidoController {
         Pedido pedido = pedidoService.buscarPorMesa(mesa);
         return ResponseEntity.ok(new PedidoResponseDTO(pedido));
     }
+
+    @Operation(summary = "Lançar pedido")
+    @PostMapping("/lancamentoPedido")
+    public ResponseEntity<PedidoResponseDTO> lancarPedido(@Valid @RequestBody PedidoRequestDTO requestDTO){
+        PedidoResponseDTO response = pedidoService.lancarPedido(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @Operation(summary = "Mudar número da mesa do pedido")
     @PutMapping("/alterar-mesa/{atual}/{nova}")
     public ResponseEntity<PedidoResponseDTO> mudarMesa(
@@ -55,12 +66,16 @@ public class PedidoController {
             @PathVariable String nomeComida) {
         return ResponseEntity.ok(pedidoService.adicionarComida(mesa, nomeComida));
     }
+
     @Operation(summary = "Registrar pagamento")
-    @PatchMapping("/pagamento/{mesa}")
-    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @RequestParam BigDecimal valor, @RequestParam FormaPagamento forma, @RequestParam Integer qtdPessoas) {
-        Object resultado = pedidoService.registrarPagamento(mesa, valor, forma, qtdPessoas);
-        return ResponseEntity.ok(resultado);
+    @PatchMapping("/pagamento/{mesa}/{cartaoId}")
+    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @PathVariable Long cartaoId,
+                                                     @RequestParam BigDecimal valor, @RequestParam FormaPagamento modalidade
+            ,@RequestParam String senhaCartao, @RequestParam Integer qtdPessoas) {
+        Object pedidoFechado = pedidoService.registrarPagamento(mesa, valor,cartaoId, modalidade, qtdPessoas, senhaCartao);
+        return ResponseEntity.ok(pedidoFechado);
     }
+
     @Operation(summary = "Remover um item específico do pedido")
     @DeleteMapping("/{mesa}/remover-item")
     public ResponseEntity<Void> removerItem(
