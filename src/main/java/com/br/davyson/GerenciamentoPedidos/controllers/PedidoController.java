@@ -68,10 +68,10 @@ public class PedidoController {
     }
 
     @Operation(summary = "Registrar pagamento")
-    @PatchMapping("/pagamento/{mesa}/{cartaoId}")
-    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @PathVariable Long cartaoId,
+    @PatchMapping("/pagamento/{mesa}")
+    public ResponseEntity<Object> registrarPagamento(@PathVariable Integer mesa, @RequestParam(defaultValue = "0") Long cartaoId,
                                                      @RequestParam BigDecimal valor, @RequestParam FormaPagamento modalidade
-            ,@RequestParam String senhaCartao, @RequestParam Integer qtdPessoas) {
+            ,@RequestParam String senhaCartao, @RequestParam(defaultValue = "1") Integer qtdPessoas) {
         Object pedidoFechado = pedidoService.registrarPagamento(mesa, valor,cartaoId, modalidade, qtdPessoas, senhaCartao);
         return ResponseEntity.ok(pedidoFechado);
     }

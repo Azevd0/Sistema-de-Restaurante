@@ -1,6 +1,5 @@
 package com.br.davyson.GerenciamentoPedidos.services;
 
-import com.br.davyson.GerenciamentoPedidos.dto.ComidaRequestDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.PedidoRequestDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.PedidoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.ReciboResponseDTO;
