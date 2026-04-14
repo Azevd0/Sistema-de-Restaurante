@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
+@Table(name = "cat")
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

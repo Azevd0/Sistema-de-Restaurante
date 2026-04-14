@@ -6,6 +6,7 @@ import com.br.davyson.GerenciamentoPedidos.enums.Periodo;
 import com.br.davyson.GerenciamentoPedidos.services.ReciboService;
 import com.br.davyson.GerenciamentoPedidos.wrapper.ListWrapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/recibo")
 @Tag(name = "Histórico Financeiro", description = "Relatório de vendas")
+@SecurityRequirement(name = "bearerAuth")
 public class ReciboController {
     private final ReciboService reciboService;
 

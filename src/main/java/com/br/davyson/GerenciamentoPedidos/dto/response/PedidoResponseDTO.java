@@ -13,7 +13,6 @@ public class PedidoResponseDTO {
     private Integer mesa;
     private String nomeAtendente;
     private List<String> comidas;
-    private String observacao;
     private BigDecimal subTotal;
     private BigDecimal taxaServico;
     private BigDecimal valorTotal;
@@ -26,15 +25,13 @@ public class PedidoResponseDTO {
     public PedidoResponseDTO() {
     }
 
-    public PedidoResponseDTO(Long id, Integer mesa, String nomeAtendente, List<String> comidas,
-                             String observacao, BigDecimal subTotal, BigDecimal taxaServico,
+    public PedidoResponseDTO(Long id, Integer mesa, String nomeAtendente, List<String> comidas, BigDecimal subTotal, BigDecimal taxaServico,
                              BigDecimal valorTotal, BigDecimal valorPago, BigDecimal saldoRestante,
                              LocalDateTime data) {
         this.id = id;
         this.mesa = mesa;
         this.nomeAtendente = nomeAtendente;
         this.comidas = comidas;
-        this.observacao = observacao;
         this.subTotal = subTotal;
         this.taxaServico = taxaServico;
         this.valorTotal = valorTotal;
@@ -50,7 +47,6 @@ public class PedidoResponseDTO {
         this.comidas = pedido.getComidas().stream()
                 .map(comida -> comida.getNome() + " - R$ " + comida.getPreco())
                 .toList();
-        this.observacao = pedido.getObservacao();
         this.subTotal = pedido.getSubtotal();
         this.taxaServico = pedido.getTaxaServico();
         this.valorTotal = pedido.getValorTotal();
@@ -70,9 +66,6 @@ public class PedidoResponseDTO {
 
     public List<String> getComidas() { return comidas; }
     public void setComidas(List<String> comidas) { this.comidas = comidas; }
-
-    public String getObservacao() { return observacao; }
-    public void setObservacao(String observacao) { this.observacao = observacao; }
 
     public BigDecimal getSubTotal() { return subTotal; }
     public void setSubTotal(BigDecimal subTotal) { this.subTotal = subTotal; }

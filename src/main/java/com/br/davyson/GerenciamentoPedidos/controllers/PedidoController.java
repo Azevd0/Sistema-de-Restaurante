@@ -6,6 +6,7 @@ import com.br.davyson.GerenciamentoPedidos.enums.FormaPagamento;
 import com.br.davyson.GerenciamentoPedidos.services.PedidoService;
 import com.br.davyson.GerenciamentoPedidos.wrapper.ListWrapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/pedidos")
 @Tag(name = "Pedidos", description = "Gerenciamento dos pedidos do restaurante")
+@SecurityRequirement(name = "bearerAuth")
 public class PedidoController {
     private final PedidoService pedidoService;
 

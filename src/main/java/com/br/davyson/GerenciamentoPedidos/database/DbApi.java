@@ -137,11 +137,4 @@ public class DbApi {
 
     }
 
-    public void instanciarUser(){
-        Atendente user1 = new Atendente("joseedu@gmail.com","José Eduardo", "user2026");
-        Atendente user2 = new Atendente("armandooliveira99@hotmail.com", "Armando Oliveira", "admin2026");
-
-        atendenteRepository.saveAll(List.of(user1,user2));
-    }
-
 }

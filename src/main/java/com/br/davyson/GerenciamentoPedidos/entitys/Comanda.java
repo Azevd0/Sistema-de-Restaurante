@@ -1,7 +1,4 @@
 package com.br.davyson.GerenciamentoPedidos.entitys;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

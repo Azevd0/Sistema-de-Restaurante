@@ -1,5 +1,6 @@
 package com.br.davyson.GerenciamentoPedidos.services;
 
+import com.br.davyson.GerenciamentoPedidos.config.JWTUserData;
 import com.br.davyson.GerenciamentoPedidos.dto.request.PedidoRequestDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.response.PedidoResponseDTO;
 import com.br.davyson.GerenciamentoPedidos.dto.response.ReciboResponseDTO;
@@ -13,6 +14,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,26 +28,28 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ComidaRepository comidaRepository;
     private final ReciboRepository reciboRepository;
-    private final AtendenteService atendenteService;
     private final ComidaService comidaService;
     private final ComandaRepository comandaRepository;
     private final CartaoClienteRepository cartaoClienteRepository;
+    private final AtendenteService atendenteService;
 
-    public PedidoService(PedidoRepository pedidoRepository, ComidaRepository comidaRepository, ReciboRepository reciboRepository, AtendenteService atendenteService, ComidaService comidaService, ComandaRepository comandaRepository, CartaoClienteRepository cartaoClienteRepository) {
+    public PedidoService(PedidoRepository pedidoRepository, ComidaRepository comidaRepository, ReciboRepository reciboRepository, ComidaService comidaService, ComandaRepository comandaRepository, CartaoClienteRepository cartaoClienteRepository, AtendenteService atendenteService) {
         this.pedidoRepository = pedidoRepository;
         this.comidaRepository = comidaRepository;
         this.reciboRepository = reciboRepository;
-        this.atendenteService = atendenteService;
         this.comidaService = comidaService;
         this.comandaRepository = comandaRepository;
         this.cartaoClienteRepository = cartaoClienteRepository;
+        this.atendenteService = atendenteService;
     }
 
     @Transactional
     @CacheEvict(value = "pedidos", allEntries = true)
     public PedidoResponseDTO lancarPedido(PedidoRequestDTO dto) {
-        String nomeUsuario = "José Eduardo";
-        Atendente atendente = atendenteService.buscarEntidadePorNome(nomeUsuario);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JWTUserData usuarioAutenticado = (JWTUserData) authentication.getPrincipal();
+        Atendente atendente = atendenteService.buscarEntidadePorEmail(usuarioAutenticado.email());
 
         if (pedidoRepository.existsByMesa(dto.numeroMesa())) {
             throw new DataIntegrityViolationException("A Mesa " + dto.numeroMesa() + " já possui um pedido em aberto!");
@@ -79,6 +84,9 @@ public class PedidoService {
     })
     public PedidoResponseDTO adicionarComida(Integer mesa, String comidaNome, String observacao) {
         Pedido pedido = buscarEntidadePorMesa(mesa);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JWTUserData usuarioAutenticado = (JWTUserData) authentication.getPrincipal();
+        Atendente atendente = atendenteService.buscarEntidadePorEmail(usuarioAutenticado.email());
 
             Comida novaComida = comidaRepository.findByNomeIgnoreCase(comidaNome)
                     .orElseThrow(() -> new ObjectNotFoundException("Comida '" + comidaNome + "' não encontrada no cardápio."));
@@ -86,7 +94,7 @@ public class PedidoService {
             pedido.getComidas().add(novaComida);
             Comanda comanda = new Comanda();
             comanda.setMesa(pedido.getMesa());
-            comanda.setAtendenteNome(pedido.getAtendente().getNome());
+            comanda.setAtendenteNome(atendente.getNome());
             comanda.getComidaNome().add(novaComida.getNome());
             comanda.setObservacao(observacao);
             comandaRepository.save(comanda);

@@ -6,6 +6,7 @@ import com.br.davyson.GerenciamentoPedidos.entitys.Comida;
 import com.br.davyson.GerenciamentoPedidos.services.ComidaService;
 import com.br.davyson.GerenciamentoPedidos.wrapper.ListWrapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/comida")
 @Tag(name = "Cardápio", description = "Gerenciamento dos itens do cardápio do restaurante")
+@SecurityRequirement(name = "bearerAuth")
 public class ComidaController {
     private final ComidaService comidaService;
 

@@ -10,6 +10,7 @@ import com.br.davyson.GerenciamentoPedidos.wrapper.ListWrapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +24,14 @@ public class AtendenteService {
     public AtendenteService(AtendenteRepository atendenteRepository) {
         this.atendenteRepository = atendenteRepository;
     }
-    @Cacheable(value = "user", key = "'atendente'")
-    public ListWrapper<AtendenteRegisterResponse> listAll(){
-        List<AtendenteRegisterResponse> atendentes = atendenteRepository.findAll()
-                .stream().map(AtendenteRegisterResponse::new).toList();
-        return new ListWrapper<>(atendentes);
-    }
+
     public Atendente buscarEntidadePorNome(String name){
         return atendenteRepository.findByNomeIgnoreCase(name)
                 .orElseThrow(() -> new ObjectNotFoundException("Atendente não encontrado."));
+    }
+    public Atendente buscarEntidadePorEmail(String email){
+        return atendenteRepository.findAtendenteByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException("Usuario não encontrado"));
     }
     @Cacheable(value = "user", key = "'atendente_' + #name")
     public AtendenteRegisterResponse buscarPorNome(String name){
