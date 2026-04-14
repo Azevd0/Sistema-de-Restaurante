@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,13 +47,15 @@ public class ComidaController {
         return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Cadastrar nova comida")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Registrar nova comida")
     @PostMapping
-    public ResponseEntity<ComidaResponseDTO> cadastrar(@RequestParam(value = "categoria") String categoriaNome, @Valid @RequestBody Comida comida) {
+    public ResponseEntity<ComidaResponseDTO> cadastrar(@RequestParam(value = "categoria") String categoriaNome, @Valid @RequestBody ComidaRequestDTO comida) {
         ComidaResponseDTO novaComida = comidaService.saveFood(comida, categoriaNome);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaComida);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualizar comida")
     @PutMapping("/{nome}")
     public ResponseEntity<ComidaResponseDTO> atualizar(@PathVariable String nome, @RequestBody ComidaRequestDTO dto) {
@@ -61,6 +64,7 @@ public class ComidaController {
         return ResponseEntity.ok(comidaAtualizada);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Excluir Comida")
     @DeleteMapping("/{nome}")
     public ResponseEntity<Void> deletar(@PathVariable String nome) {

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class PedidoController {
         PedidoResponseDTO response = pedidoService.lancarPedido(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Mudar número da mesa do pedido")
     @PutMapping("/alterar-mesa/{atual}/{nova}")
     public ResponseEntity<PedidoResponseDTO> mudarMesa(
@@ -53,6 +54,7 @@ public class PedidoController {
             @PathVariable Integer nova) {
         return ResponseEntity.ok(pedidoService.alterarMesa(atual, nova));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Transferir um item de uma mesa para outra")
     @PatchMapping("/transferir/{origem}/{destino}/{comida}")
     public ResponseEntity<PedidoResponseDTO> transferir(
@@ -61,6 +63,7 @@ public class PedidoController {
             @PathVariable String comida) {
         return ResponseEntity.ok(pedidoService.transferirComida(origem, destino, comida));
     }
+
     @Operation(summary = "Adicionar uma comida a um pedido existente")
     @PatchMapping("/adicionar/{mesa}/{nomeComida}")
     public ResponseEntity<PedidoResponseDTO> adicionarItem(
@@ -78,7 +81,7 @@ public class PedidoController {
         Object pedidoFechado = pedidoService.registrarPagamento(mesa, valor,cartaoId, modalidade, qtdPessoas, senhaCartao);
         return ResponseEntity.ok(pedidoFechado);
     }
-    //http://localhost:9090/pedidos/pagamento/61?cartaoId=0&valor=200.09&modalidade=PIX&cartaoSenha=''&qtdPessoas=3
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remover um item específico do pedido")
     @DeleteMapping("/{mesa}/remover-item")
     public ResponseEntity<Void> removerItem(

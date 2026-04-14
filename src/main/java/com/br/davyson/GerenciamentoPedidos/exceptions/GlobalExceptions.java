@@ -8,6 +8,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -64,6 +67,19 @@ public class GlobalExceptions {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationError);
     }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> methodArgumentNotValid(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        ValidationError validationError = new ValidationError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro na validação dos campos. Verifique os campos pendentes.",
+                request.getRequestURI());
+
+        for (FieldError fError : exception.getBindingResult().getFieldErrors()) {
+            validationError.addError(fError.getField(), fError.getDefaultMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationError);
+    }
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<StandardError> httpMessageNotReadable(HttpServletRequest request){
         StandardError standardError = new StandardError(
@@ -72,6 +88,16 @@ public class GlobalExceptions {
                 "Erro de digitação! Revise a requisição!",
                 request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(standardError);
+    }
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<StandardError> handleAccessDenied(AuthorizationDeniedException ex, HttpServletRequest request) {
+        StandardError error = new StandardError(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado! Esta ação só pode ser executada por um administrador!",
+                request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
     @ExceptionHandler(OptimisticLockException.class)
     public ResponseEntity<StandardError> optimisticLock(HttpServletRequest request){

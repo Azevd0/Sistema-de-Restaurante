@@ -1,7 +1,6 @@
 package com.br.davyson.GerenciamentoPedidos.profile;
 
 import com.br.davyson.GerenciamentoPedidos.database.DbApi;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

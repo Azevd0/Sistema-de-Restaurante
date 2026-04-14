@@ -1,10 +1,12 @@
 package com.br.davyson.GerenciamentoPedidos.entitys;
 
 import com.br.davyson.GerenciamentoPedidos.dto.request.AtendenteRegisterRequest;
+import com.br.davyson.GerenciamentoPedidos.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ public class Atendente implements UserDetails {
 
     @OneToMany(mappedBy = "atendente", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public Atendente(String login, String nome, String senha) {
         this.email = login;
@@ -87,21 +92,29 @@ public class Atendente implements UserDetails {
         this.pedidos = pedidos;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Atendente atendente = (Atendente) o;
-        return Objects.equals(id, atendente.id) && Objects.equals(email, atendente.email) && Objects.equals(nome, atendente.nome) && Objects.equals(senha, atendente.senha) && Objects.equals(pedidos, atendente.pedidos);
+        return Objects.equals(id, atendente.id) && Objects.equals(email, atendente.email) && Objects.equals(nome, atendente.nome) && Objects.equals(senha, atendente.senha) && Objects.equals(pedidos, atendente.pedidos) && role == atendente.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, nome, senha, pedidos);
+        return Objects.hash(id, email, nome, senha, pedidos, role);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override

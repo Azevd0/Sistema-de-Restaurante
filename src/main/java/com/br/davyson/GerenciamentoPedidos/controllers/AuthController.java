@@ -6,6 +6,7 @@ import com.br.davyson.GerenciamentoPedidos.dto.request.LoginAtendenteRequest;
 import com.br.davyson.GerenciamentoPedidos.dto.response.AtendenteRegisterResponse;
 import com.br.davyson.GerenciamentoPedidos.dto.response.LoginAtendenteResponse;
 import com.br.davyson.GerenciamentoPedidos.entitys.Atendente;
+import com.br.davyson.GerenciamentoPedidos.enums.Role;
 import com.br.davyson.GerenciamentoPedidos.services.AtendenteService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -48,11 +49,12 @@ public class AuthController {
 
     @Operation(summary = "Registrar usuário")
     @PostMapping("/registro")
-    public ResponseEntity<AtendenteRegisterResponse> cadastrar(@RequestBody @Valid AtendenteRegisterRequest dto) {
+    public ResponseEntity<AtendenteRegisterResponse> cadastrar(@RequestBody @Valid AtendenteRegisterRequest dto, Role cargo) {
         Atendente atendente = new Atendente();
         atendente.setNome(dto.nome());
         atendente.setEmail(dto.email());
         atendente.setSenha(passwordEncoder.encode(dto.senha()));
+        atendente.setRole(cargo);
 
         AtendenteRegisterResponse salvo = atendenteService.saveAtendente(atendente);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);

@@ -59,13 +59,17 @@ public class ComidaService {
     }
     @Transactional
     @CacheEvict(value = "cardapio", allEntries = true)
-    public ComidaResponseDTO saveFood(Comida comida, String categoriaNome) {
+    public ComidaResponseDTO saveFood(ComidaRequestDTO request, String categoriaNome) {
         Categoria categoriaExistente = categoriaRepository.findByNomeIgnoreCase(categoriaNome)
                 .orElseThrow(() -> new ObjectNotFoundException(
                         "Não foi possível cadastrar: A categoria '" + categoriaNome + "' não foi encontrada!"));
-        if (comidaRepository.existsByNomeIgnoreCase(comida.getNome())) {
-            throw new DataIntegrityViolationException("A comida '" + comida.getNome() + "' já existe!");
+        if (comidaRepository.existsByNomeIgnoreCase(request.nome())) {
+            throw new DataIntegrityViolationException("A comida '" + request.nome() + "' já existe!");
         }
+        Comida comida = new Comida();
+        comida.setNome(request.nome());
+        comida.setDescricao(request.descricao());
+        comida.setPreco(request.preco());
         comida.setCategoria(categoriaExistente);
         comidaRepository.save(comida);
         return new ComidaResponseDTO(comida);

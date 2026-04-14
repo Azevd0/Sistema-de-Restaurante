@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +30,7 @@ public class AtendenteController {
     public ResponseEntity<AtendenteRegisterResponse> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(atendenteService.buscarPorNome(nome));
     }
+
     @Operation(summary = "Listar pedidos do atendente pelo id")
     @GetMapping("/listarPedidos/{id}")
     public ResponseEntity<ListWrapper<PedidoResponseDTO>> listarPedidosDoAtendente(@PathVariable Long id){
@@ -37,12 +38,16 @@ public class AtendenteController {
         ListWrapper<PedidoResponseDTO> pedidos = atendenteService.listarPedidosDoAtendente(atendete);
         return ResponseEntity.ok(pedidos);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualizar atendente")
     @PutMapping("/atualizacao/{nome}")
     public ResponseEntity<AtendenteRegisterResponse> atualizar(@PathVariable String nome, @RequestBody @Valid AtendenteRegisterRequest dto) {
         AtendenteRegisterResponse atualizado = atendenteService.updateAtendenteByName(nome, dto);
         return ResponseEntity.ok(atualizado);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remover atendente")
     @DeleteMapping("/remover/{nome}")
     public ResponseEntity<Void> deletar(@PathVariable String nome) {

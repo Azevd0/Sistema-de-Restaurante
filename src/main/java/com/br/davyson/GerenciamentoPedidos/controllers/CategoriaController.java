@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,13 +31,15 @@ public class CategoriaController {
         return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Cadastrar nova categoria")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Registrar nova categoria")
     @PostMapping
     public ResponseEntity<CategoriaResponseDTO> cadastrar(@Valid @RequestBody Categoria categoria) {
         CategoriaResponseDTO novaCategoria = service.save(categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoria);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualizar categoria pelo nome")
     @PutMapping("/{nome}")
     public ResponseEntity<CategoriaResponseDTO> atualizar(@PathVariable String nome, @Valid @RequestBody Categoria categoria) {
@@ -44,6 +47,7 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaAtualizada);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Excluir categoria")
     @DeleteMapping("/{nome}")
     public ResponseEntity<Void> deletar(@PathVariable String nome) {
