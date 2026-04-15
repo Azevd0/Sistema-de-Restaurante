@@ -21,7 +21,7 @@ docker compose --profile test down
 Com a aplicação em runtime, acesse a URL da documentação:
 
 ```bash
-http://localhost:8080/swagger-ui/index.html
+http://localhost:9090/swagger-ui/index.html
 ```
 ## Autenticação de usuário
 
