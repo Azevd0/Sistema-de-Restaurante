@@ -35,7 +35,8 @@ public class SecurityFilter extends OncePerRequestFilter {
                 JWTUserData jwtUser = optUser.get();
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + jwtUser.role()));
 
-                UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(jwtUser, null,authorities);
+                UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(
+                        jwtUser, null,authorities);
                 SecurityContextHolder.getContext().setAuthentication(userAuth);
             }
             filterChain.doFilter(request,response);
