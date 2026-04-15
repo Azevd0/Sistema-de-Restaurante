@@ -1,4 +1,4 @@
-# Sistema-de-Restaurante
+# Order Factory
 Sistema de restaurante em desenvolvimento para gerenciamento de pedidos e funcionários, permitindo cadastro de entidades, listagem de cardápio, registro de pagamento e histórico financeiro da empresa. Nesta versão implementei Redis Cache e configurei a serialização de objetos Java para Json.
 Aqui está uma breve instrução de ativação da API:
 
