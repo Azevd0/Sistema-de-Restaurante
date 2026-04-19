@@ -40,7 +40,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    @Operation(summary = "Lançar pedido")
+    @Operation(summary = "Lançar pedido", description = "Autenticação necessária")
     @PostMapping("/lancamentoPedido")
     public ResponseEntity<PedidoResponseDTO> lancarPedido(@Valid @RequestBody PedidoRequestDTO requestDTO){
         PedidoResponseDTO response = pedidoService.lancarPedido(requestDTO);
@@ -64,12 +64,12 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.transferirComida(origem, destino, comida));
     }
 
-    @Operation(summary = "Adicionar uma comida a um pedido existente")
+    @Operation(summary = "Adicionar uma comida a um pedido existente", description = "Autenticação necessária")
     @PatchMapping("/adicionar/{mesa}/{nomeComida}")
     public ResponseEntity<PedidoResponseDTO> adicionarItem(
             @PathVariable Integer mesa,
             @PathVariable String nomeComida,
-            @RequestParam(defaultValue = "''", value = "observacao") String observacao) {
+            @RequestParam(value = "observacao") String observacao) {
         return ResponseEntity.ok(pedidoService.adicionarComida(mesa, nomeComida, observacao));
     }
 

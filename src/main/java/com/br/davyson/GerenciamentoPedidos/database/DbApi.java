@@ -4,7 +4,6 @@ import com.br.davyson.GerenciamentoPedidos.entitys.CartaoCliente;
 import com.br.davyson.GerenciamentoPedidos.entitys.Categoria;
 import com.br.davyson.GerenciamentoPedidos.entitys.Comida;
 import com.br.davyson.GerenciamentoPedidos.enums.BandeiraCartao;
-import com.br.davyson.GerenciamentoPedidos.enums.FormaPagamento;
 import com.br.davyson.GerenciamentoPedidos.enums.ModalidadaCartao;
 import com.br.davyson.GerenciamentoPedidos.repositorys.AtendenteRepository;
 import com.br.davyson.GerenciamentoPedidos.repositorys.CartaoClienteRepository;

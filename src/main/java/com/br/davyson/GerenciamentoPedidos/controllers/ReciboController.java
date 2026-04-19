@@ -25,13 +25,13 @@ public class ReciboController {
         this.reciboService = reciboService;
     }
 
-    @Operation(summary = "Ver faturamento de todos os períodos")
+    @Operation(summary = "Ver faturamento de todos os períodos", description = "Autenticação necessária")
     @GetMapping("/faturamento")
     public ResponseEntity<FaturamentoResponseDTO> verFaturamento() {
         return ResponseEntity.ok(reciboService.calcularFaturamento());
     }
 
-    @Operation(summary = "Filtrar histórico por período")
+    @Operation(summary = "Filtrar histórico por período", description = "Autenticação necessária")
     @GetMapping("/historico-de-vendas")
     public ResponseEntity<ListWrapper<ReciboResponseDTO>> obterHistorico(
             @RequestParam Periodo periodo) {

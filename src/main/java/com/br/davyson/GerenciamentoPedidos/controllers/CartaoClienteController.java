@@ -30,20 +30,20 @@ public class CartaoClienteController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrar-cartao/{saldo}")
     public ResponseEntity<CartaoClienteResponseDTO> registrarCartao(
-                                                                    @RequestParam(value = "senha", defaultValue = "''") String senha,
+                                                                    @RequestParam(value = "senha") String senha,
                                                                     @PathVariable BigDecimal saldo,
                                                                     BandeiraCartao bandeira,
                                                                     ModalidadaCartao modalidade){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.registrarCartao(senha,saldo,bandeira,modalidade));
     }
 
-    @Operation(summary = "Listar todos os cartões cadastrados")
+    @Operation(summary = "Listar todos os cartões cadastrados", description = "Autenticação necessária")
     @GetMapping
     public ResponseEntity<ListWrapper<CartaoClienteResponseDTO>> listar() {
         return ResponseEntity.ok(service.listarCartoes());
     }
 
-    @Operation(summary = "Buscar um cartão específico pelo ID")
+    @Operation(summary = "Buscar um cartão específico pelo ID", description = "Autenticação necessária")
     @GetMapping("/{id}")
     public ResponseEntity<CartaoClienteResponseDTO> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));

@@ -24,7 +24,8 @@ public class ComandaController {
         this.comandaService = comandaService;
     }
 
-    @Operation(summary = "Listar todo o histórico de lançamentos filtrado por período.")
+    @Operation(summary = "Listar todo o histórico de lançamentos filtrado por período."
+            , description = "Autenticação necessária")
     @GetMapping("/itens_lancados")
     public ResponseEntity<ListWrapper<ComandaDTO>> listarHistorico(@RequestParam Periodo periodo) {
         ListWrapper<ComandaDTO> historico = comandaService.listarHistorico(periodo);

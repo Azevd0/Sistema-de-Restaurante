@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.br.davyson</groupId>
-	<artifactId>GerenciamentoPedidos</artifactId>
+	<artifactId>order-factory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>GerenciamentoPedidos</name>
+	<name>OrderFactory</name>
 	<description>desenvolvimento de uma api de gerenciamento de pedidos de restaurante</description>
 	<url/>
 	<licenses>
@@ -102,7 +102,7 @@
         </dependency>
 	</dependencies>
 	<build>
-        <finalName>app</finalName>
+        <finalName>orderfactory</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

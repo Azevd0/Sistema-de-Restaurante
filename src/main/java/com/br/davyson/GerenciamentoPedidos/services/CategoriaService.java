@@ -33,12 +33,14 @@ public class CategoriaService {
 
     @Transactional
     @CacheEvict(value = "cardapio", allEntries = true)
-    public CategoriaResponseDTO save(Categoria categoria) {
-        if (categoriaRepository.existsByNomeIgnoreCase(categoria.getNome())) {
-            throw new DataIntegrityViolationException("A categoria '" + categoria.getNome() + "' já existe!");
+    public CategoriaResponseDTO save(String nomeCategoria ) {
+        if (categoriaRepository.existsByNomeIgnoreCase(nomeCategoria)) {
+            throw new DataIntegrityViolationException("A categoria '" + nomeCategoria + "' já existe!");
         }
-        categoriaRepository.save(categoria);
-        return new CategoriaResponseDTO(categoria);
+        Categoria categoriaCriada = new Categoria();
+        categoriaCriada.setNome(nomeCategoria);
+        categoriaRepository.save(categoriaCriada);
+        return new CategoriaResponseDTO(categoriaCriada);
     }
 
     @Transactional

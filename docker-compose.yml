@@ -1,8 +1,23 @@
 services:
+  orderfactory-service:
+    image: postgres:15
+    container_name: my-order-factory
+    profiles: ["dev"]
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+    restart: unless-stopped
+
+
   redis:
     image: redis:7.4.2-alpine
-    container_name: redis_pedidos
-    profiles: ["test"]
+    container_name: redis_orderfactory
+    profiles: ["test", "dev"]
     ports:
       - "6379:6379"
     restart: unless-stopped

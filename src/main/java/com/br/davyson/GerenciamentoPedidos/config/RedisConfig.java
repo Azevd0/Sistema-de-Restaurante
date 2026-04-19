@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.boot.CommandLineRunner;
@@ -50,8 +48,8 @@ public class RedisConfig {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(baseConfig.entryTtl(Duration.ofMinutes(10)))
                 .withCacheConfiguration("cardapio", baseConfig.entryTtl(Duration.ofDays(1)))
-                .withCacheConfiguration("historico", baseConfig.entryTtl(Duration.ofDays(30)))
-                .withCacheConfiguration("historico_financeiro", baseConfig.entryTtl(Duration.ofDays(30)))
+                .withCacheConfiguration("historico", baseConfig.entryTtl(Duration.ofMinutes(10)))
+                .withCacheConfiguration("historico_financeiro", baseConfig.entryTtl(Duration.ofMinutes(10)))
                 .build();
     }
 

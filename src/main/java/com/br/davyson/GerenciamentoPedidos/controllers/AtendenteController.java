@@ -4,12 +4,10 @@ import com.br.davyson.GerenciamentoPedidos.entitys.Atendente;
 import com.br.davyson.GerenciamentoPedidos.enums.Role;
 import com.br.davyson.GerenciamentoPedidos.services.AtendenteService;
 import com.br.davyson.GerenciamentoPedidos.dto.response.AtendenteRegisterResponse;
-import com.br.davyson.GerenciamentoPedidos.dto.request.AtendenteRegisterRequest;
 import com.br.davyson.GerenciamentoPedidos.wrapper.ListWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +24,13 @@ public class AtendenteController {
         this.atendenteService = atendenteService;
     }
 
-    @Operation(summary = "Buscar atendente por nome")
+    @Operation(summary = "Buscar atendente por nome", description = "Autenticação necessária")
     @GetMapping("/busca/{nome}")
     public ResponseEntity<AtendenteRegisterResponse> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(atendenteService.buscarPorNome(nome));
     }
 
-    @Operation(summary = "Listar pedidos do atendente pelo id")
+    @Operation(summary = "Listar pedidos do atendente pelo id", description = "Autenticação necessária")
     @GetMapping("/listarPedidos/{id}")
     public ResponseEntity<ListWrapper<PedidoResponseDTO>> listarPedidosDoAtendente(@PathVariable Long id){
         Atendente atendete = atendenteService.findById(id);

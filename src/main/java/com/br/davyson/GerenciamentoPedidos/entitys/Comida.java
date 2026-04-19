@@ -3,6 +3,7 @@ package com.br.davyson.GerenciamentoPedidos.entitys;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 

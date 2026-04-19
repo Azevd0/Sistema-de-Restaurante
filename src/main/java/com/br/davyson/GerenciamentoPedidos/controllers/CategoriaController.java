@@ -34,8 +34,8 @@ public class CategoriaController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Registrar nova categoria", description = "!Apenas administradores!")
     @PostMapping
-    public ResponseEntity<CategoriaResponseDTO> cadastrar(@Valid @RequestBody Categoria categoria) {
-        CategoriaResponseDTO novaCategoria = service.save(categoria);
+    public ResponseEntity<CategoriaResponseDTO> cadastrar(@Valid @RequestParam(value = "nome") String categoriaNome) {
+        CategoriaResponseDTO novaCategoria = service.save(categoriaNome);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaCategoria);
     }
 
