@@ -7,16 +7,47 @@
 [![Docker](https://img.shields.io/badge/Docker-Container-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 
-Sistema de restaurante desenvolvido para gerenciamento de pedidos e registro de usuários(atendentes), permitindo cadastro de entidades, listagem de cardápio, lançamento de pedidos e registro de pagamento. O sistema também conta com histórico de lançamentos, restrição de acesso para administradores e relatório financeiro. Para escalabilidade e performance, a API armazena dados em cache executado em container, tornando consultas e comandos mais ágeis.
+Sistema de restaurante desenvolvido para gerenciamento de pedidos e registro de usuários(atendentes), permitindo cadastro de entidades, listagem de cardápio, lançamento de pedidos e registro de pagamento. O sistema também conta com histórico de lançamentos, restrição de acesso para administradores e relatório financeiro. Para escalabilidade e performance, a API tem serviços de armazenamento de dados em cache e em banco de dados relacional, ambos executados em ambiente de contêiner, tornando seu uso ágil e seguro.
 
-## 🚀 Executando a API via Docker
-Para iniciar OrderFactory e todas as suas dependências (como banco de dados e Redis) de forma automatizada, utilize o Docker Compose.
+## Configuração do Ambiente Local
 
-Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute o seguinte comando:
+Para rodar este projeto na sua máquina, você precisará configurar as credenciais do banco de dados e garantir que sua IDE consiga ler essas variáveis. Siga o passo a passo abaixo:
+
+### 1. Configurando as Variáveis de Ambiente (.env)
+Este projeto utiliza variáveis de ambiente para proteger dados sensíveis. 
+
+1. Na raiz do projeto, localize o arquivo `.env.example`.
+2. Faça uma cópia deste arquivo e renomeie a cópia para **`.env`**.
+3. Abra o seu novo arquivo `.env` e preencha com as senhas e usuários que você deseja utilizar no seu banco local:
+   ```env
+   DB_USER=seu_usuario_aqui
+   DB_PASSWORD=sua_senha_aqui
+   DB_NAME=orderfactory
+   ```
+4. Para que sua IDE saiba ler o .env, atualize suas configurações de run para que possa receber bem o arquivo.
+* Intellij: instale o plugin EnvFile, vá nas configurações de run -> Edit -> marque Enable Envfile -> selecione seu arquivo.env
+* VS Code: baixe a extensão Spring Boot Extension Pack, ele lida automaticamente com o .env
+* Eclipse: clique com o botão direito no projeto -> Run As -> Run Configurations....
+Selecione sua aplicação em Spring Boot App ou Java Application. Vá na aba Environment.
+Aqui, você terá que clicar em Add... e colocar cada variável manualmente (DB_USER, DB_PASSWORD, etc.).
+
+
+## Executando a API via Docker
+Para iniciar OrderFactory, utilize o Docker Compose para executar os perfis de teste ou desenvolvimento.
+
+Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute o seguinte comando, para iniciar o contêiner de testes:
 
 ````bash
 docker compose --profile test up -d
 ````
+
+Para executar o contêiner de desenvolvimento execute:
+
+````bash
+docker compose --profile dev up -d
+````
+### Spring profile:
+no application.properties, altere o spring.profiles.active= para o perfil desejado (test/dev), e então dê run na API
 
 ## 🛑 Como parar a aplicação
 Quando terminar seus testes, você pode derrubar os contêineres e liberar os recursos da máquina rodando:
@@ -24,12 +55,23 @@ Quando terminar seus testes, você pode derrubar os contêineres e liberar os re
 ```bash
 docker compose --profile test down
 ```
+ou para o perfil de desenvolvimento...
+````bash
+docker compose --profile dev down
+````
 
-Com a aplicação em runtime, acesse a URL da documentação:
+## Acessando documentação (Swagger)
+Com a aplicação em runtime, acesse a URL da documentação dos testes:
 
 ```bash
 http://localhost:9090/swagger-ui/index.html
 ```
+e para a documentação de desenvolvimento...
+
+```bash
+http://localhost:9091/swagger-ui/index.html
+```
+
 ## Autenticação de usuário
 
   <div align="center">
