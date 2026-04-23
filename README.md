@@ -38,7 +38,7 @@ Para iniciar OrderFactory, utilize o Docker Compose para executar os perfis de t
 ### Spring profile:
 no application.properties, altere o spring.profiles.active= para o perfil desejado (test/prod).
 
-Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute o seguinte comando, para iniciar o contêiner de testes:
+Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute o seguinte comando, para iniciar o serviço do Redis para o perfil de testes:
 
 ````bash
 docker compose --profile test up -d
