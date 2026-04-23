@@ -1,23 +1,55 @@
 services:
-  orderfactory-service:
-    image: postgres:15
-    container_name: my-order-factory
-    profiles: ["dev"]
+  api:
+    build: .
+    container_name: myorderfactory-prod
     ports:
-      - "5433:5432"
+      - "9091:9091"
+    profiles: ["prod"]
+    depends_on:
+      api-db:
+          condition: service_healthy
+      redis:
+          condition: service_started
+    environment:
+      - SERVER_PORT=9091
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://api-db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_CACHE_TYPE=redis
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+    networks:
+      - orderfactory-network
+
+  api-db:
+    image: postgres:17-alpine
+    container_name: my-order-factory-db
+    profiles: ["prod"]
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - ./postgres-db:/var/lib/postgresql/data
-    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      retries: 5
+    networks:
+      - orderfactory-network
 
 
   redis:
     image: redis:7.4.2-alpine
     container_name: redis_orderfactory
-    profiles: ["test", "dev"]
+    profiles: ["test", "prod"]
     ports:
       - "6379:6379"
-    restart: unless-stopped
+    networks:
+      - orderfactory-network
+
+networks:
+  orderfactory-network:
+    driver: bridge
