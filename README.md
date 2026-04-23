@@ -6,6 +6,7 @@
 [![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Container-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![GraalVM](https://img.shields.io/badge/GraalVM-Native%20Image-black?style=for-the-badge&logo=graalvm&logoColor=white)](https://www.graalvm.org/)
 
 Sistema de restaurante desenvolvido para gerenciamento de pedidos e registro de usuários(atendentes), permitindo cadastro de entidades, listagem de cardápio, lançamento de pedidos e registro de pagamento. O sistema também conta com histórico de lançamentos, restrição de acesso para administradores e relatório financeiro. Para escalabilidade e performance, a API tem serviços de armazenamento de dados em cache e em banco de dados relacional, ambos executados em ambiente de contêiner, tornando seu uso ágil e seguro.
 
@@ -33,7 +34,9 @@ Aqui, você terá que clicar em Add... e colocar cada variável manualmente (DB_
 
 
 ## Executando a API via Docker
-Para iniciar OrderFactory, utilize o Docker Compose para executar os perfis de teste ou desenvolvimento.
+Para iniciar OrderFactory, utilize o Docker Compose para executar os perfis de teste ou produção.
+### Spring profile:
+no application.properties, altere o spring.profiles.active= para o perfil desejado (test/prod).
 
 Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute o seguinte comando, para iniciar o contêiner de testes:
 
@@ -41,13 +44,25 @@ Na raiz do projeto, onde o arquivo docker-compose.yml está localizado, execute 
 docker compose --profile test up -d
 ````
 
-Para executar o contêiner de desenvolvimento execute:
+Para executar o contêiner de produção, primeiro você deve executar o build da imagem na raíz do projeto:
 
 ````bash
-docker compose --profile dev up -d
+docker compose --profile prod build
 ````
-### Spring profile:
-no application.properties, altere o spring.profiles.active= para o perfil desejado (test/dev), e então dê run na API
+O processo é demorado e custa muita memória, pois o projeto usa compilação aot (ahead-of-time). Se o build quebrar é por falta de memória, não da máquina, mas a memória disponível para o docker. Caso aconteça, pesquise %USERPROFILE% na barra de pesquisa do windows e crie um arquivo de texto e renomeie para .wslconfig (certifique-se de remover o .txt, caso contrário ele não vai funcionar. No arquivo cole isso e execute o build novamente:
+
+```
+[wsl2]
+memory=8GB 
+
+processors=4
+
+swap=4GB
+```
+Quando o build estiver completo execute:
+```bash
+docker compose --profile prod up -d
+```
 
 ## 🛑 Como parar a aplicação
 Quando terminar seus testes, você pode derrubar os contêineres e liberar os recursos da máquina rodando:
@@ -57,7 +72,7 @@ docker compose --profile test down
 ```
 ou para o perfil de desenvolvimento...
 ````bash
-docker compose --profile dev down
+docker compose --profile prod down
 ````
 
 ## Acessando documentação (Swagger)
@@ -66,7 +81,7 @@ Com a aplicação em runtime, acesse a URL da documentação dos testes:
 ```bash
 http://localhost:9090/swagger-ui/index.html
 ```
-e para a documentação de desenvolvimento...
+e para a documentação de produção...
 
 ```bash
 http://localhost:9091/swagger-ui/index.html
@@ -85,7 +100,7 @@ http://localhost:9091/swagger-ui/index.html
 </div>
 
 ## Cartões
-Para registro de pagamento na modalidade de cartão, há cartões fictícios instanciados em memória. Confira as senhas de cada um:
+Para registro de pagamento na modalidade de cartão, há cartões fictícios instanciados em memória, mas APENAS PARA O PERFIL DE TESTE. Confira as senhas de cada um:
 
 Id: 1 | Senha: @#1234
 
