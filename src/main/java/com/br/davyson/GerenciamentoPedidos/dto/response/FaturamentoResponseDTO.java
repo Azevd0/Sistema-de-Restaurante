@@ -1,5 +1,9 @@
 package com.br.davyson.GerenciamentoPedidos.dto.response;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
+
 import java.math.BigDecimal;
+
+@RegisterReflectionForBinding({ FaturamentoResponseDTO.class })
 public class FaturamentoResponseDTO {
 
     private BigDecimal hoje;

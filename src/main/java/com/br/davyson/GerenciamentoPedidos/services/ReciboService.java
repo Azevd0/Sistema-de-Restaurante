@@ -45,7 +45,7 @@ public class ReciboService {
 
     }
 
-    @Cacheable(value = "historico_financeiro", key = "'faturamento'", unless = "#result == null || #result.hoje.signum() == 0")
+    @Cacheable(value = "historico_financeiro", key = "'faturamento'")
     public FaturamentoResponseDTO calcularFaturamento() {
         BigDecimal hoje = somarPorPeriodo(LocalDate.now().atStartOfDay());
         BigDecimal semana = somarPorPeriodo(LocalDateTime.now().minusWeeks(1));
